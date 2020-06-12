@@ -90,7 +90,11 @@
             for (i=0;i<5;i++) {
                 mylist = mylist + "<li class='collection-item avatar'>";
                 mylist = mylist + "<i class='material-icons circle red'>warning</i>";
-                mylist = mylist + "<span class='title'>" + data[i]['pname'] + ", " + data[i]['cname'] + "</span>"
+                if (data[i]['pname'] != "") {
+                    mylist = mylist + "<span class='title'>" + data[i]['pname'] + ", " + data[i]['cname'] + "</span>"
+                } else {
+                    mylist = mylist + "<span class='title'>" + data[i]['cname'] + "</span>"
+                }
                 mylist = mylist + "<p>Confirmed cases: " + data[i]['confirmed'] + "</p>";
             }
             mylist = mylist + "</ul>"
