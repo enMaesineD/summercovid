@@ -1,0 +1,118 @@
+<html>
+
+    <head>
+        <link rel='stylesheet' href='css/leaflet.css'/>
+        <link rel='stylesheet' href='css/materialize.min.css'/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script src='js/leaflet.js'></script>
+        <script src='js/materialize.min.js'></script>
+        <script src="js/chart.js@2.8.0"></script>
+        <script src='js/06-11-2020.js'></script>
+        <title>COVID-19</title>
+    </head>
+
+    <body>
+        <nav>
+            <div class="nav-wrapper" style="margin-left: 15px; margin-right: 15px">
+              <a href="#" class="brand-logo">Logo</a>
+              <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="sass.html">Sass</a></li>
+                <li><a href="badges.html">Components</a></li>
+                <li><a href="collapsible.html">JavaScript</a></li>
+              </ul>
+            </div>
+        </nav>
+        <div class="row" style="margin-top: 10px;">
+            <div class="col s12 m6 l3" id="top5"></div>
+            <div class="col s12 m6 l6">
+                <div id='map' style='width:100%; height:500'></div>
+            </div>
+            <div class="col s12 m6 l3">
+                <h5>Top 5 confirmed</h5>
+                <canvas id="chartjs-2" class="chartjs" width="100%" height="100%" style="display: block;"></canvas>
+            </div>
+        </div>
+        
+        <footer class="page-footer">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text">Footer Content</h5>
+                <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                  <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2014 Copyright Text
+            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+            </div>
+          </div>
+        </footer>
+        
+    </body>
+    
+    <script>
+        
+        map()
+        toplist()
+        graph()
+        
+        function map() {
+            // Set up the world map
+            map = new L.Map('map');
+            var cartocdn = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+            // https://carto.com/help/building-maps/basemap-list/
+            carto = new L.TileLayer(cartocdn);
+            map.setView([51,0],1.5); // centered on London lat, long
+            map.addLayer(carto);
+
+            // Loop to write out circles from test.js
+            conf_x_factor = 5;
+            for (i=0;i<data.length;i++) {
+                L.circle([data[i]['lat'],data[i]['lon']],{color:'red',fillColor:'#f03',fillOpacity:0.5,radius: data[i]['confirmed'] * conf_x_factor}).addTo(map).bindPopup(data[i]['pname'] + ", " + data[i]['cname'] + ": " + data[i]['confirmed']);    
+            }
+        }
+        
+        function toplist() {
+            topdiv = document.getElementById("top5");
+            mylist = "<h5>Top 5 confirmed</h5>";
+            mylist = mylist + "<ul class='collection'>";
+            for (i=0;i<5;i++) {
+                mylist = mylist + "<li class='collection-item avatar'>";
+                mylist = mylist + "<i class='material-icons circle red'>warning</i>";
+                mylist = mylist + "<span class='title'>" + data[i]['pname'] + ", " + data[i]['cname'] + "</span>"
+                mylist = mylist + "<p>Confirmed cases: " + data[i]['confirmed'] + "</p>";
+            }
+            mylist = mylist + "</ul>"
+            topdiv.innerHTML = mylist;
+        }
+        
+        function graph() {
+            labels = [];
+            top5data = [];
+            for (i=0;i<5;i++) {
+                if (data[i]['pname'] != "") {
+                    labels.push(data[i]['pname'] + ", " + data[i]['cname'])
+                } else {
+                    labels.push(data[i]['cname'])
+                }
+                top5data.push(data[i]['confirmed']);
+            }
+            
+            new Chart(document.getElementById("chartjs-2"),{"type":"horizontalBar","data":{"labels":labels,"datasets":[{"label":"Confirmed","data":top5data,"fill":false,"backgroundColor":["rgba(255, 99, 132, 0.2)","rgba(255, 159, 64, 0.2)","rgba(255, 205, 86, 0.2)","rgba(75, 192, 192, 0.2)","rgba(54, 162, 235, 0.2)","rgba(153, 102, 255, 0.2)","rgba(201, 203, 207, 0.2)"],"borderColor":["rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],"borderWidth":1}]},"options":{"scales":{"xAxes":[{"ticks":{"beginAtZero":true}}]}}});
+            
+        }
+        
+    </script>
+
+</html>
